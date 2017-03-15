@@ -24,7 +24,7 @@ var Shape = function(opts) {
 
 	this.shape = opts.shape;
 	this.speed = opts.speed;
-	this.width = opts.width;
+	this.size = opts.size;
 	this.xPos = opts.xPos;
 	this.yPos = opts.yPos;
 	this.opacity = 0.05 + Math.random() * 0.5;
@@ -35,7 +35,7 @@ var Shape = function(opts) {
 			ctx.arc(
 				self.xPos,
 				self.yPos,
-				self.width,
+				self.size,
 				0,
 				Math.PI * 2,
 				false
@@ -45,8 +45,8 @@ var Shape = function(opts) {
 			ctx.rect(
 				self.xPos, 
 				self.yPos, 
-				self.width, 
-				self.width
+				self.size, 
+				self.size
 			)
 		}
 	};
@@ -55,40 +55,38 @@ var Shape = function(opts) {
 		shapeAttributes[shape]();
 	}
 
-	
+	this.update = function() {
+		ctx.beginPath();
+
+		this.drawShape(this.shape);
+
+		// move horizontally
+		if (this.xPos < canvas.width + this.size) {
+			this.xPos = this.xPos + (0.3 * this.speed);	
+		} else {
+			this.xPos = -this.size;
+			this.yPos = this.originalY;
+		}
+
+		// move vertically
+		if (this.yPos > (canvas.height / 2)) {
+			this.yPos = this.yPos - 0.1;
+		} else {
+			this.yPos = this.yPos + 0.1;
+		}
+
+		ctx.closePath();
+
+		// style
+		ctx.fillStyle = 'rgba(185, 211, 238,' + this.opacity + ')';
+		ctx.shadowColor = '#FFF';
+		ctx.shadowBlur = 20;
+		ctx.shadowOffsetX = 0;
+		ctx.shadowOffsetY = 0;
+
+		ctx.fill();
+	};
 }
-
-Shape.prototype.update = function() {
-	ctx.beginPath();
-
-	this.drawShape(this.shape);
-
-	// move horizontally
-	if (this.xPos < canvas.width + this.width) {
-		this.xPos = this.xPos + (0.3 * this.speed);	
-	} else {
-		this.xPos = -this.width;
-		this.yPos = this.originalY;
-	}
-
-	// move vertically
-	if (this.yPos > (canvas.height / 2)) {
-		this.yPos = this.yPos - 0.1;
-	} else {
-		this.yPos = this.yPos + 0.1;
-	}
-
-	ctx.closePath();
-
-	// style
-	ctx.fillStyle = 'rgba(185, 211, 238,' + this.opacity + ')';
-	ctx.shadowColor = '#FFF';
-	ctx.shadowBlur = 20;
-	ctx.shadowOffsetX = 0;
-	ctx.shadowOffsetY = 0;
-
-	ctx.fill();
-};
 
 var shapeCreator = {
 	numOfSets: 0,
@@ -115,11 +113,9 @@ var shapeCreator = {
 				shape: opts.shape,
 				xPos: randomX,
 				yPos: randomY,
-				width: size,
+				size: size,
 				speed: speed
 			})
-
-			// var shape = new Shape(this.canvas, this.context, opts.shape, speed, size, randomX, randomY);
 
 			set.shapes.push(shape);
 		}
@@ -134,10 +130,12 @@ var shapeCreator = {
 
 var init = function() {
 
-	// var canvas = document.getElementById('dxp-background');
-	// var ctx = canvas.getContext('2d');
+	var canvas = document.getElementById('dxp-background');
+	var ctx = canvas.getContext('2d');
 
 	shapeCreator.add({
+		canvas: canvas,
+		context: ctx,
 		shape: 'circle',
 		num: 30,
 		maxSpeed: 5,
