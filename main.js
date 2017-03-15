@@ -1,81 +1,157 @@
+var generateNumBetween = function(min, max) {
+	return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
 var canvas = document.getElementById('dxp-background');
-var context = canvas.getContext('2d');
+var ctx = canvas.getContext('2d');
 
-var requestAnimationFrame = window.requestAnimationFrame ||
-                            window.mozRequestAnimationFrame ||
-                            window.webkitRequestAnimationFrame ||
-                            window.msRequestAnimationFrame;
-var w = 100;
-var h = 100;
-var incr = 0.05;
-var xPos = 0;
-var dest = context.canvas.width - w;
+var draw = function() {
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	
+	for (let p = 0; p < shapeCreator.sets.length; p++) {
+		var currentSet = shapeCreator.sets[p];
 
-var drawCircle = function(opts) {
-    context.clearRect(0, 0, 500, 500);
-    context.translate(incr, 0);
+		for (var i = 0; i < currentSet.shapes.length; i++) {
+			currentSet.shapes[i].update();
+		}
+	}
 
-    var startAngle = (Math.PI / 180) * 0;
-    var endAngle = (Math.PI / 180) * 360;
-    context.shadowColor = "white";
-    context.shadowOffsetX = 0;
-    context.shadowOffsetY = 0;
-    // context.shadowBlur = 15;
-    context.globalAlpha = 0.5;
+	requestAnimationFrame(draw);
+}
 
-    // context.save();
+var Shape = function(opts) {
+	var self = this;
 
-    //B2. DRAW CIRCLE
-    context.beginPath();
-    context.arc(
-    	15,
-    	15,
-    	10,
-        startAngle,
-        endAngle,
-        false);
+	this.shape = opts.shape;
+	this.speed = opts.speed;
+	this.width = opts.width;
+	this.xPos = opts.xPos;
+	this.yPos = opts.yPos;
+	this.opacity = 0.05 + Math.random() * 0.5;
+	this.originalY = opts.yPos;
 
-    xPos += incr;
-	  if(xPos <= 0 || dest <= xPos) {
-	    incr *= -1;
-	  }
+	var shapeAttributes = {
+		circle: function() {
+			ctx.arc(
+				self.xPos,
+				self.yPos,
+				self.width,
+				0,
+				Math.PI * 2,
+				false
+			);
+		},
+		square: function() {
+			ctx.rect(
+				self.xPos, 
+				self.yPos, 
+				self.width, 
+				self.width
+			)
+		}
+	};
 
-    context.fillStyle = "white";
-    context.fill();
+	this.drawShape = function(shape) {
+		shapeAttributes[shape]();
+	}
 
-    window.setInterval(drawCircle, 1);
+	
+}
+
+Shape.prototype.update = function() {
+	ctx.beginPath();
+
+	this.drawShape(this.shape);
+
+	// move horizontally
+	if (this.xPos < canvas.width + this.width) {
+		this.xPos = this.xPos + (0.3 * this.speed);	
+	} else {
+		this.xPos = -this.width;
+		this.yPos = this.originalY;
+	}
+
+	// move vertically
+	if (this.yPos > (canvas.height / 2)) {
+		this.yPos = this.yPos - 0.1;
+	} else {
+		this.yPos = this.yPos + 0.1;
+	}
+
+	ctx.closePath();
+
+	// style
+	ctx.fillStyle = 'rgba(185, 211, 238,' + this.opacity + ')';
+	ctx.shadowColor = '#FFF';
+	ctx.shadowBlur = 20;
+	ctx.shadowOffsetX = 0;
+	ctx.shadowOffsetY = 0;
+
+	ctx.fill();
+};
+
+var shapeCreator = {
+	numOfSets: 0,
+	sets: [],
+	add: function(opts) {
+		var set = {};
+
+		set.shapes = [];
+
+		if (!opts.shape) return;
+
+		for (var i = 0; i < opts.num; i++) {
+
+			var minSpeed = opts.minSpeed || 1;
+			var maxSpeed = opts.maxSpeed || 5;
+			var startingX = opts.startingX || 5;
+
+			var randomX = generateNumBetween(-200, canvas.width);
+			var randomY = generateNumBetween(0, canvas.height);
+			var speed = generateNumBetween(minSpeed, maxSpeed);
+			var size = generateNumBetween(0, opts.maxSize);
+
+			var shape = new Shape({
+				shape: opts.shape,
+				xPos: randomX,
+				yPos: randomY,
+				width: size,
+				speed: speed
+			})
+
+			// var shape = new Shape(this.canvas, this.context, opts.shape, speed, size, randomX, randomY);
+
+			set.shapes.push(shape);
+		}
+
+		this.sets.push(set)
+		this.numOfSets++;
+
+		draw();
+		console.log(this);
+	}
+};
+
+var init = function() {
+
+	// var canvas = document.getElementById('dxp-background');
+	// var ctx = canvas.getContext('2d');
+
+	shapeCreator.add({
+		shape: 'circle',
+		num: 30,
+		maxSpeed: 5,
+		maxSize: 10
+	});
+
+
+	shapeCreator.add({
+		// shape: 'square',
+		num: 10,
+		maxSpeed: 5,
+		maxSize: 10
+	});
 };
 
 
-var generateRandomCircles = function(canvas) {
-    var config = {
-        numCircles: 20,
-        maxRadius: 20,
-        minRadius: 3
-    };
-
-    var context = canvas.getContext('2d');
-
-    for (var n = 0; n < config.numCircles; n++) {
-        var xPos = Math.random() * canvas.width;
-        var yPos = Math.random() * canvas.height;
-        var radius = config.minRadius + (Math.random() * (config.maxRadius - config.minRadius));
-        var colorIndex = Math.random() * (1);
-        colorIndex = Math.round(colorIndex);
-        var color = "white";
-
-        // A5. DRAW circle.
-        drawCircle({
-        	context: context,
-        	xPos: xPos,
-        	yPos: yPos,
-        	radius: radius,
-        	color: color
-        });
-    }
-
-    window.requestAnimationFrame(drawCircle);
-
-};
-
-drawCircle();
+init();
