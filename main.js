@@ -225,7 +225,6 @@ var shapeCreator = {
 		
 		// if context already exists, add it to it
 		if (canvasUniqueness !== true) {
-			console.log(canvasUniqueness)
 			canvasUniqueness['shapes'] = canvasUniqueness['shapes'].concat(shapes);
 
 		// otherwise create a new set
@@ -239,7 +238,6 @@ var shapeCreator = {
 			this.sets.push(set)
 
 			draw();
-			console.log(this);
 		}
 		
 	},
@@ -275,7 +273,7 @@ var init = function() {
 		style: 'solid'
 	});
 
-	// generate squares
+	// generate other shapes
 	var canvas = document.getElementById('dxp-background2');
 	var ctx = canvas.getContext('2d');
 
