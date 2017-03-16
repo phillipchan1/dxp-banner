@@ -10,17 +10,20 @@ shapeCreator.add(selector, opts)
 ## Simple Usage
 
 ```
-shapeCreator.add(
+shapesCreator.add(
     '#dxp-background2',
     {
         canvasWidth: '50%',
         canvasHeight: '100%',
         shape: 'square',
         movement: 'expand',
-        num: 20,
+        num: 10,
         maxSpeed: 5,
         maxSize: 10,
-        style: 'outline'
+        style: 'outline',
+        transitionIn: 'fade',
+        transitionOut: 'fade',
+        transitionThreshold: 0.2
     }
 );
 ```
@@ -74,3 +77,6 @@ Options:
 Options:
 - `fade`
 
+**transitionThreshold** [Integer]
+
+Specifies what % of the canvas will it begin its transitions in and out. E.g. `0.2` signifies that the period of transition in is between 0-20% of the canvas width and the period of transition out is between the 80%-100% of canvas width.
