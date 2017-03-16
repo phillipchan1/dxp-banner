@@ -9,6 +9,12 @@ shapeCreator.add(selector, opts)
 
 ## Simple Usage
 
+**HTML**
+```
+<canvas id="dxp-background2"></canvas>
+```
+
+**Javascript**
 ```
 shapesCreator.add(
     '#dxp-background2',
@@ -29,12 +35,12 @@ shapesCreator.add(
 ```
 
 ## Selector
-Use query selector syntax (e.g. `.container` or `#banner`);
+Use query selector syntax (e.g. `.container` or `#banner`) and select the canvas
 
 ## Options
 
 
-**canvasWidth** [Number or String]
+##### canvasWidth [Number or String]
 
 Specify width of canvas. Can be percentage `Number` (e.g. `500`) or pixel `String` (e.g. `'50%'`)
 
@@ -44,7 +50,11 @@ Specify height of canvas. Can be percentage `Number` (e.g. `500`) or pixel `Stri
 
 **shape** [String]
 
-Options: `square`, `circle`, `rectangle`
+Options: 
+- `square` 
+- `circle`
+- `rectangle`
+- `hexagon`
 
 **movement** [String]
 Specifies the type of movement the objects take on. 
