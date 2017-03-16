@@ -94,9 +94,10 @@ var Shape = function(opts) {
 
 				// move vertically
 				if (self.yPos > (self.canvas.height / 2)) {
-					self.yPos = self.yPos - 0.1;
-				} else {
-					self.yPos = self.yPos + 0.1;
+					self.yPos = self.yPos - 0.05;
+				}
+					else {
+					self.yPos = self.yPos + 0.05;
 				}
 			}
 		},
@@ -127,9 +128,9 @@ var Shape = function(opts) {
 
 				// move vertically
 				if (self.yPos > (self.canvas.height / 2)) {
-					self.yPos = self.yPos + 0.2;
+					self.yPos = self.yPos + 0.1;
 				} else {
-					self.yPos = self.yPos - 0.2;
+					self.yPos = self.yPos - 0.1;
 				}
 			}
 		}
@@ -151,6 +152,7 @@ var Shape = function(opts) {
 		},
 		outline: function() {
 			self.context.strokeStyle = 'rgba(240, 241, 248,' + self.opacity + ')';
+			self.context.lineWidth = 3;
 			self.context.stroke();
 		}
 	};
@@ -271,7 +273,7 @@ var Shape = function(opts) {
 		this.setStyle(self.style);
 
 		ctx.shadowColor = '#FFF';
-		ctx.shadowBlur = 20;
+		ctx.shadowBlur = 10;
 		ctx.shadowOffsetX = 0;
 		ctx.shadowOffsetY = 0;
 	};
@@ -397,13 +399,13 @@ var init = (function() {
 			canvasHeight: '100%',
 			movement: 'converge',
 			shape: 'circle',
-			num: 20,
-			maxSpeed: 5,
+			num: 30,
+			maxSpeed: 2,
 			maxSize: 10,
 			style: 'solid',
 			transitionIn: 'fade',
 			transitionOut: 'fade',
-			transitionThreshold: 0.2
+			transitionThreshold: 0.3
 		}
 	);
 
@@ -416,12 +418,12 @@ var init = (function() {
 			shape: 'hexagon',
 			movement: 'expand',
 			num: 10,
-			maxSpeed: 3,
+			maxSpeed: 2,
 			maxSize: 10,
 			style: 'outline',
 			transitionIn: 'fade',
 			transitionOut: 'fade',
-			transitionThreshold: 0.2
+			transitionThreshold: 0.3
 		}
 	);
 
@@ -431,12 +433,12 @@ var init = (function() {
 			shape: 'circle',
 			movement: 'expand',
 			num: 10,
-			maxSpeed: 5,
+			maxSpeed: 2,
 			maxSize: 10,
 			style: 'outline',
 			transitionIn: 'fade',
 			transitionOut: 'fade',
-			transitionThreshold: 0.2
+			transitionThreshold: 0.3
 		}
 	);
 
@@ -446,12 +448,12 @@ var init = (function() {
 			shape: 'rectangle',
 			movement: 'expand',
 			num: 10,
-			maxSpeed: 5,
+			maxSpeed: 2,
 			maxSize: 10,
 			style: 'outline',
 			transitionIn: 'fade',
 			transitionOut: 'fade',
-			transitionThreshold: 0.2
+			transitionThreshold: 0.3
 		}
 	);
 })();
