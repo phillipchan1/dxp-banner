@@ -3,24 +3,44 @@ var utils = (function() {
 		generateNumBetween: function(min, max) {
 			return Math.floor(Math.random() * (max - min + 1) + min);
 		},
-		checkIfArrayIsUnique: function(arr) {
-		    var map = {}, i, size;
+		isPercentage: function(string) {
+			if (/^\d+(\.\d+)?%$/.test(string)) {
+				let x = parseFloat(string);
+				if (isNaN(x) || x < 0 || x > 100) {
+				    return false;
+				} else {
+					return true;
+				}
+			} else {
+				return false;
+			}
+		},
+		parsePercentageOrPixel: function(figure) {
+			// check if percentage
+			if (/^\d+(\.\d+)?%$/.test(figure)) {
+				return parseFloat(figure);
+			} else {
+				return figure;
+			}
+		},
+		setCanvasSize: function(opts) {
+			if (this.isPercentage(opts.size)) {
+				let parentProperty = 'offset' + this.toTitleCase(opts.property);
+				let parentPropertySize = opts.canvas.parentElement[parentProperty];
 
-		    for (i = 0, size = arr.length; i < size; i++){
-		        if (map[arr[i]]){
-		            return false;
-		        }
+				opts.canvas[opts.property] = (parseFloat(opts.size) / 100) * parentPropertySize;
 
-		        map[arr[i]] = true;
-		    }
-
-		    return true;
+			} else {
+				opts.canvas[opts.property] = opts.size;
+			}
+		},
+		toTitleCase: function(str) {
+    		return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 		}
 	};
 })();
 
 var draw = function() {
-
 	for (let p = 0; p < shapeCreator.sets.length; p++) {
 		var currentSet = shapeCreator.sets[p];
 
@@ -196,14 +216,19 @@ var Shape = function(opts) {
 
 var shapeCreator = {
 	sets: [],
-	add: function(opts) {
+	add: function(selector, opts) {
+
+		// create instance of canvas
+		var instance = this.initCanvas(selector, opts);
 
 		// check if canvas is unique
-		var canvasUniqueness = this.checkSetUniqueness(opts);
+		var canvasUniqueness = this.checkSetUniqueness(instance.canvas);
+
+		// to hold the shapes created
 		var shapes = [];
 
+		// create our shapes
 		for (var i = 0; i < opts.num; i++) {
-
 			var minSpeed = opts.minSpeed || 1;
 			var maxSpeed = opts.maxSpeed || 5;
 			var startingX = opts.startingX || 5;
@@ -211,8 +236,8 @@ var shapeCreator = {
 			var size = utils.generateNumBetween(0, opts.maxSize);
 
 			var shape = new Shape({
-				canvas: opts.canvas,
-				context: opts.context,
+				canvas: instance.canvas,
+				context: instance.context,
 				movement: opts.movement,
 				shape: opts.shape,
 				style: opts.style,
@@ -232,8 +257,8 @@ var shapeCreator = {
 			var set = {};
 
 			set.shapes = shapes;
-			set.context = opts.context;
-			set.canvas = opts.canvas;
+			set.context = instance.context;
+			set.canvas = instance.canvas;
 
 			this.sets.push(set);
 
@@ -243,72 +268,106 @@ var shapeCreator = {
 	},
 
 	// checks if a set is unique, if it is return true, otherwise return the set
-	checkSetUniqueness: function(opts) {
+	checkSetUniqueness: function(canvas) {
 		var canvasUniqueness = true;
 
 		for (var x = 0; x < this.sets.length; x++) {
-			if (this.sets[x].canvas === opts.canvas) {
+			if (this.sets[x].canvas === canvas) {
 				return this.sets[x];
 			}
 		}
 
 		return canvasUniqueness;
+	},
+
+	// helps instatiates the canvas object
+	initCanvas: function(selector, opts) {
+		var canvas = document.querySelector(selector);
+		var context = canvas.getContext('2d');
+		var windowWidth = window.innerWidth;
+
+		// set width
+		if (opts.canvasWidth) {
+			utils.setCanvasSize({
+				canvas: canvas,
+				property: 'width',
+				size: opts.canvasWidth
+			});
+		}
+
+		if (opts.canvasHeight) {
+			utils.setCanvasSize({
+				canvas: canvas,
+				property: 'height',
+				size: opts.canvasHeight
+			});
+		}
+
+
+
+
+		return {
+			canvas: canvas,
+			context: context
+		};
 	}
 };
 
 var init = function() {
 
 	// generate circles in first canvas
-	var canvas = document.getElementById('dxp-background');
-	var ctx = canvas.getContext('2d');
+	shapeCreator.add(
+		'#dxp-background',
+		{
+			canvasWidth: '50%',
+			canvasHeight: '100%',
+			movement: 'converge',
+			shape: 'circle',
+			num: 20,
+			maxSpeed: 5,
+			maxSize: 10,
+			style: 'solid'
+		}
+	);
 
-	shapeCreator.add({
-		canvas: canvas,
-		context: ctx,
-		movement: 'converge',
-		shape: 'circle',
-		num: 20,
-		maxSpeed: 5,
-		maxSize: 10,
-		style: 'solid'
-	});
+	// generate other shapes in second canvas
+	shapeCreator.add(
+		'#dxp-background2',
+		{
+			canvasWidth: '50%',
+			canvasHeight: '100%',
+			shape: 'square',
+			movement: 'expand',
+			num: 20,
+			maxSpeed: 5,
+			maxSize: 10,
+			style: 'outline'
+		}
+	);
 
-	// generate other shapes
-	var canvas = document.getElementById('dxp-background2');
-	var ctx = canvas.getContext('2d');
+	shapeCreator.add(
+		'#dxp-background2',
+		{
+			shape: 'circle',
+			movement: 'expand',
+			num: 30,
+			maxSpeed: 5,
+			maxSize: 10,
+			style: 'outline'
+		}
+	);
 
-	shapeCreator.add({
-		canvas: canvas,
-		context: ctx,
-		shape: 'square',
-		movement: 'expand',
-		num: 20,
-		maxSpeed: 5,
-		maxSize: 10,
-		style: 'outline'
-	});
-
-	shapeCreator.add({
-		canvas: canvas,
-		context: ctx,
-		shape: 'circle',
-		movement: 'expand',
-		num: 30,
-		maxSpeed: 5,
-		maxSize: 10,
-		style: 'outline'
-	});
-
-	shapeCreator.add({
-		canvas: canvas,
-		context: ctx,
-		shape: 'rectangle',
-		movement: 'expand',
-		num: 10,
-		maxSpeed: 5,
-		maxSize: 10,
-		style: 'outline'
-	});
+	shapeCreator.add(
+		'#dxp-background2',
+		{
+			shape: 'rectangle',
+			movement: 'expand',
+			num: 10,
+			maxSpeed: 5,
+			maxSize: 10,
+			style: 'outline'
+		}
+	);
 };
 
 
