@@ -62,3 +62,15 @@ Specifies max speed shapes move at
 
 Specifies maximum size of shapes
 
+**transitionIn** [String]
+
+Specifies what type of animation to transition in
+
+Options:
+- `fade`
+ 
+**transitionOut** [String]
+
+Options:
+- `fade`
+
