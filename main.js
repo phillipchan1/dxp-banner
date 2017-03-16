@@ -1,8 +1,11 @@
 var utils = (function() {
 	return {
+		// generate random number between 2 integers
 		generateNumBetween: function(min, max) {
 			return Math.floor(Math.random() * (max - min + 1) + min);
 		},
+
+		// checks if a value is a percentage
 		isPercentage: function(string) {
 			if (/^\d+(\.\d+)?%$/.test(string)) {
 				let x = parseFloat(string);
@@ -15,14 +18,8 @@ var utils = (function() {
 				return false;
 			}
 		},
-		parsePercentageOrPixel: function(figure) {
-			// check if percentage
-			if (/^\d+(\.\d+)?%$/.test(figure)) {
-				return parseFloat(figure);
-			} else {
-				return figure;
-			}
-		},
+
+		// set the canvas size
 		setCanvasSize: function(opts) {
 			if (this.isPercentage(opts.size)) {
 				let parentProperty = 'offset' + this.toTitleCase(opts.property);
@@ -34,6 +31,8 @@ var utils = (function() {
 				opts.canvas[opts.property] = opts.size;
 			}
 		},
+
+		// converts a string to Title Case
 		toTitleCase: function(str) {
     		return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 		}
@@ -41,11 +40,10 @@ var utils = (function() {
 })();
 
 var draw = function() {
-	for (let p = 0; p < shapeCreator.sets.length; p++) {
-		var currentSet = shapeCreator.sets[p];
+	for (let p = 0; p < shapesCreator.sets.length; p++) {
+		var currentSet = shapesCreator.sets[p];
 
 		currentSet.context.clearRect(0, 0, currentSet.canvas.width, currentSet.canvas.height);
-		var currentSet = shapeCreator.sets[p];
 
 		for (var i = 0; i < currentSet.shapes.length; i++) {
 			currentSet.shapes[i].update();
@@ -62,12 +60,15 @@ var Shape = function(opts) {
 	this.canvas = opts.canvas;
 	this.movement = opts.movement;
 	this.opacity = 0.05 + Math.random() * 0.5;
-	this.originalY;
-	this.originalX;
+	this.originalY = undefined;
+	this.originalX = undefined;
 	this.shape = opts.shape;
 	this.size = opts.size;
 	this.speed = opts.speed;
 	this.style = opts.style;
+	this.transitionIn = opts.transitionIn;
+	this.transitionOut = opts.transitionOut;
+	this.transitionThreshold = 0.2;
 	this.xPos = opts.xPos;
 	this.yPos = opts.yPos;
 
@@ -77,9 +78,9 @@ var Shape = function(opts) {
 				var xPos = utils.generateNumBetween(-200, opts.canvas.width);
 				var yPos = utils.generateNumBetween(0, opts.canvas.height);
 
-				self.originalY = yPos
-				self.originalX = xPos
-				self.xPos = xPos
+				self.originalY = yPos;
+				self.originalX = xPos;
+				self.xPos = xPos;
 				self.yPos = yPos;
 			},
 			move: function() {
@@ -138,6 +139,10 @@ var Shape = function(opts) {
 		this.movements[movement].move();
 	};
 
+	this.setStyle = function() {
+		this.styles[this.style]();
+	};
+
 	this.styles = {
 		solid: function() {
 			// style
@@ -150,12 +155,62 @@ var Shape = function(opts) {
 		}
 	};
 
-	this.setStyle = function() {
-		this.styles[this.style]();
+	this.transitions = {
+		fade: {
+			in: {
+				init: function() {
+					self.originalOpacity = self.opacity;
+				},
+				action: function(transitionInRange) {
+					if (self.xPos <= transitionInRange[0]) {
+						self.opacity = 0;
+					} else if (self.opacity < self.originalOpacity) {
+							self.opacity = self.opacity + .002;
+						}
+					}
+			},
+			out: {
+				init: function() {
+					self.originalOpacity = self.opacity;
+				},
+				action: function(transitionOutRange) {
+					if (self.xPos > transitionOutRange[0]) {
+						self.opacity = self.opacity - .005;
+					} else if (self.xPos > transitionOutRange[1]) {
+						self.opacity = self.originalOpacity;
+					}
+				}
+			}
+		}
 	};
 
-	// set starting position
-	this.movements[this.movement].starting();
+	this.setTransition = function() {
+		if (self.transitionIn) {
+			this.transitions[self.transitionIn]['in']['init']();
+		}
+
+		if (self.transitionOut) {
+			this.transitions[self.transitionOut]['out']['init']();
+		}
+
+	};
+
+	this.transition = function() {
+		var transitionInRange = [0, self.transitionThreshold * self.canvas.width];
+		var transitionOutRange = [(1 - self.transitionThreshold) * self.canvas.width, self.canvas.width];
+
+		if (self.transitionIn) {
+			if (self.xPos / self.canvas.width < self.transitionThreshold) {
+				this.transitions[self.transitionIn]['in']['action'](transitionInRange);
+			}
+		}
+
+		if (self.transitionOut) {
+			if (self.xPos / self.canvas.width > 0.8) {
+				this.transitions[self.transitionIn]['out']['action'](transitionOutRange);
+			}
+		}
+	};
 
 	this.drawShape = function(shape) {
 		var shapeAttributes = {
@@ -186,9 +241,11 @@ var Shape = function(opts) {
 				);
 			}
 		};
+
 		shapeAttributes[shape]();
 	};
 
+	// on every frame redraw, this is the function that controls what happens
 	this.update = function() {
 		var ctx = self.context;
 
@@ -200,6 +257,9 @@ var Shape = function(opts) {
 		// define movement
 		this.move(self.movement);
 
+		// transition
+		this.transition();
+
 		// define style
 		this.setStyle(self.style);
 
@@ -209,12 +269,20 @@ var Shape = function(opts) {
 		ctx.shadowBlur = 20;
 		ctx.shadowOffsetX = 0;
 		ctx.shadowOffsetY = 0;
-
-
 	};
+
+	// for everyshape, this init function gets called last to set properties
+	this.init = (function() {
+		// set starting position
+		self.movements[self.movement].starting();
+
+		// set transition inits
+		self.setTransition();
+
+	})();
 };
 
-var shapeCreator = {
+var shapesCreator = {
 	sets: [],
 	add: function(selector, opts) {
 
@@ -224,10 +292,10 @@ var shapeCreator = {
 		// check if canvas is unique
 		var canvasUniqueness = this.checkSetUniqueness(instance.canvas);
 
-		// to hold the shapes created
+		// array to hold the shapes created
 		var shapes = [];
 
-		// create our shapes
+		// create our shapes and add to array
 		for (var i = 0; i < opts.num; i++) {
 			var minSpeed = opts.minSpeed || 1;
 			var maxSpeed = opts.maxSpeed || 5;
@@ -242,7 +310,10 @@ var shapeCreator = {
 				shape: opts.shape,
 				style: opts.style,
 				size: size,
-				speed: speed
+				speed: speed,
+				transitionIn: opts.transitionIn,
+				transitionOut: opts.transitionOut,
+
 			});
 
 			shapes.push(shape);
@@ -252,7 +323,7 @@ var shapeCreator = {
 		if (canvasUniqueness !== true) {
 			canvasUniqueness['shapes'] = canvasUniqueness['shapes'].concat(shapes);
 
-		// otherwise create a new set
+		// otherwise create a new set and push it to master set
 		} else {
 			var set = {};
 
@@ -295,6 +366,7 @@ var shapeCreator = {
 			});
 		}
 
+		// set height
 		if (opts.canvasHeight) {
 			utils.setCanvasSize({
 				canvas: canvas,
@@ -302,9 +374,6 @@ var shapeCreator = {
 				size: opts.canvasHeight
 			});
 		}
-
-
-
 
 		return {
 			canvas: canvas,
@@ -316,7 +385,7 @@ var shapeCreator = {
 var init = function() {
 
 	// generate circles in first canvas
-	shapeCreator.add(
+	shapesCreator.add(
 		'#dxp-background',
 		{
 			canvasWidth: '50%',
@@ -326,48 +395,50 @@ var init = function() {
 			num: 20,
 			maxSpeed: 5,
 			maxSize: 10,
-			style: 'solid'
+			style: 'solid',
+			transitionIn: 'fade',
+			transitionOut: 'fade'
 		}
 	);
 
 	// generate other shapes in second canvas
-	shapeCreator.add(
-		'#dxp-background2',
-		{
-			canvasWidth: '50%',
-			canvasHeight: '100%',
-			shape: 'square',
-			movement: 'expand',
-			num: 20,
-			maxSpeed: 5,
-			maxSize: 10,
-			style: 'outline'
-		}
-	);
+	// shapesCreator.add(
+	// 	'#dxp-background2',
+	// 	{
+	// 		canvasWidth: '50%',
+	// 		canvasHeight: '100%',
+	// 		shape: 'square',
+	// 		movement: 'expand',
+	// 		num: 10,
+	// 		maxSpeed: 5,
+	// 		maxSize: 10,
+	// 		style: 'outline'
+	// 	}
+	// );
 
-	shapeCreator.add(
-		'#dxp-background2',
-		{
-			shape: 'circle',
-			movement: 'expand',
-			num: 30,
-			maxSpeed: 5,
-			maxSize: 10,
-			style: 'outline'
-		}
-	);
+	// shapesCreator.add(
+	// 	'#dxp-background2',
+	// 	{
+	// 		shape: 'circle',
+	// 		movement: 'expand',
+	// 		num: 10,
+	// 		maxSpeed: 5,
+	// 		maxSize: 10,
+	// 		style: 'outline'
+	// 	}
+	// );
 
-	shapeCreator.add(
-		'#dxp-background2',
-		{
-			shape: 'rectangle',
-			movement: 'expand',
-			num: 10,
-			maxSpeed: 5,
-			maxSize: 10,
-			style: 'outline'
-		}
-	);
+	// shapesCreator.add(
+	// 	'#dxp-background2',
+	// 	{
+	// 		shape: 'rectangle',
+	// 		movement: 'expand',
+	// 		num: 10,
+	// 		maxSpeed: 5,
+	// 		maxSize: 10,
+	// 		style: 'outline'
+	// 	}
+	// );
 };
 
 
