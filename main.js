@@ -39,7 +39,7 @@ var utils = (function() {
 	};
 })();
 
-var draw = function() {
+var drawAnimation = function() {
 	for (let p = 0; p < shapesCreator.sets.length; p++) {
 		var currentSet = shapesCreator.sets[p];
 
@@ -50,7 +50,7 @@ var draw = function() {
 		}
 	}
 
-	requestAnimationFrame(draw);
+	requestAnimationFrame(drawAnimation);
 };
 
 var Shape = function(opts) {
@@ -68,7 +68,7 @@ var Shape = function(opts) {
 	this.style = opts.style;
 	this.transitionIn = opts.transitionIn;
 	this.transitionOut = opts.transitionOut;
-	this.transitionThreshold = 0.2;
+	this.transitionThreshold = 0.2 || opts.transitionThreshold;
 	this.xPos = opts.xPos;
 	this.yPos = opts.yPos;
 
@@ -192,7 +192,6 @@ var Shape = function(opts) {
 		if (self.transitionOut) {
 			this.transitions[self.transitionOut]['out']['init']();
 		}
-
 	};
 
 	this.transition = function() {
@@ -313,7 +312,7 @@ var shapesCreator = {
 				speed: speed,
 				transitionIn: opts.transitionIn,
 				transitionOut: opts.transitionOut,
-
+				transitionThreshold: 0.2
 			});
 
 			shapes.push(shape);
@@ -333,7 +332,7 @@ var shapesCreator = {
 
 			this.sets.push(set);
 
-			draw();
+			drawAnimation();
 		}
 
 	},
@@ -397,48 +396,59 @@ var init = function() {
 			maxSize: 10,
 			style: 'solid',
 			transitionIn: 'fade',
-			transitionOut: 'fade'
+			transitionOut: 'fade',
+			transitionThreshold: 0.2
+
 		}
 	);
 
 	// generate other shapes in second canvas
-	// shapesCreator.add(
-	// 	'#dxp-background2',
-	// 	{
-	// 		canvasWidth: '50%',
-	// 		canvasHeight: '100%',
-	// 		shape: 'square',
-	// 		movement: 'expand',
-	// 		num: 10,
-	// 		maxSpeed: 5,
-	// 		maxSize: 10,
-	// 		style: 'outline'
-	// 	}
-	// );
+	shapesCreator.add(
+		'#dxp-background2',
+		{
+			canvasWidth: '50%',
+			canvasHeight: '100%',
+			shape: 'square',
+			movement: 'expand',
+			num: 10,
+			maxSpeed: 5,
+			maxSize: 10,
+			style: 'outline',
+			transitionIn: 'fade',
+			transitionOut: 'fade',
+			transitionThreshold: 0.2
+		}
+	);
 
-	// shapesCreator.add(
-	// 	'#dxp-background2',
-	// 	{
-	// 		shape: 'circle',
-	// 		movement: 'expand',
-	// 		num: 10,
-	// 		maxSpeed: 5,
-	// 		maxSize: 10,
-	// 		style: 'outline'
-	// 	}
-	// );
+	shapesCreator.add(
+		'#dxp-background2',
+		{
+			shape: 'circle',
+			movement: 'expand',
+			num: 10,
+			maxSpeed: 5,
+			maxSize: 10,
+			style: 'outline',
+			transitionIn: 'fade',
+			transitionOut: 'fade',
+			transitionThreshold: 0.2
+		}
+	);
 
-	// shapesCreator.add(
-	// 	'#dxp-background2',
-	// 	{
-	// 		shape: 'rectangle',
-	// 		movement: 'expand',
-	// 		num: 10,
-	// 		maxSpeed: 5,
-	// 		maxSize: 10,
-	// 		style: 'outline'
-	// 	}
-	// );
+	shapesCreator.add(
+		'#dxp-background2',
+		{
+			shape: 'rectangle',
+			movement: 'expand',
+			num: 10,
+			maxSpeed: 5,
+			maxSize: 10,
+			style: 'outline',
+			transitionIn: 'fade',
+			transitionOut: 'fade',
+			transitionThreshold: 0.2
+		}
+	);
 };
 
 
