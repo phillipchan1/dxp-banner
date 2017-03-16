@@ -238,17 +238,25 @@ var Shape = function(opts) {
 					self.size * 2,
 					self.size
 				);
+			},
+			hexagon: function() {
+				self.context.moveTo(self.xPos, self.yPos);
+	            self.context.lineTo(self.xPos + self.size, self.yPos - self.size);
+	            self.context.lineTo(self.xPos + self.size, self.yPos - self.size * 2);
+	            self.context.lineTo(self.xPos, self.yPos - self.size * 3);
+	            self.context.lineTo(self.xPos - self.size, self.yPos - self.size * 2);
+	            self.context.lineTo(self.xPos - self.size, self.yPos - self.size);
 			}
 		};
 
+		self.context.beginPath();
 		shapeAttributes[shape]();
+		self.context.closePath();
 	};
 
 	// on every frame redraw, this is the function that controls what happens
 	this.update = function() {
 		var ctx = self.context;
-
-		ctx.beginPath();
 
 		// draw shape
 		this.drawShape(this.shape);
@@ -261,8 +269,6 @@ var Shape = function(opts) {
 
 		// define style
 		this.setStyle(self.style);
-
-		ctx.closePath();
 
 		ctx.shadowColor = '#FFF';
 		ctx.shadowBlur = 20;
@@ -407,10 +413,10 @@ var init = (function() {
 		{
 			canvasWidth: '50%',
 			canvasHeight: '100%',
-			shape: 'square',
+			shape: 'hexagon',
 			movement: 'expand',
 			num: 10,
-			maxSpeed: 5,
+			maxSpeed: 3,
 			maxSize: 10,
 			style: 'outline',
 			transitionIn: 'fade',
