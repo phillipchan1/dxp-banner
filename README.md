@@ -48,7 +48,7 @@ Specifies the type of movement the objects take on.
 
 Options:
 - `expand`
-- `collapse`
+- `converge`
 
 **num** [Number]
 
