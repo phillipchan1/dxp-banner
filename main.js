@@ -16,11 +16,11 @@ var utils = (function() {
 
 		    return true;
 		}
-	}
+	};
 })();
 
 var draw = function() {
-	
+
 	for (let p = 0; p < shapeCreator.sets.length; p++) {
 		var currentSet = shapeCreator.sets[p];
 
@@ -33,7 +33,7 @@ var draw = function() {
 	}
 
 	requestAnimationFrame(draw);
-}
+};
 
 var Shape = function(opts) {
 	var self = this;
@@ -65,7 +65,7 @@ var Shape = function(opts) {
 			move: function() {
 				// move horizontally
 				if (self.xPos < self.canvas.width + self.size) {
-					self.xPos = self.xPos + (0.3 * self.speed);	
+					self.xPos = self.xPos + (0.3 * self.speed);
 				} else {
 					self.xPos = -self.size;
 					self.yPos = self.originalY;
@@ -84,21 +84,21 @@ var Shape = function(opts) {
 				var xPos = utils.generateNumBetween(-200, opts.canvas.width / 2);
 				var yPos = utils.generateNumBetween(
 					// 40% from top
-					(opts.canvas.height / 2) - (opts.canvas.height * .1), 
+					(opts.canvas.height / 2) - (opts.canvas.height * .1),
 
 					// 60% from top
 					(opts.canvas.height / 2) + (opts.canvas.height * .1)
 				);
 
-				self.originalY = yPos
-				self.originalX = xPos
-				self.xPos = xPos
+				self.originalY = yPos;
+				self.originalX = xPos;
+				self.xPos = xPos;
 				self.yPos = yPos;
 			},
 			move: function() {
 				// move horizontally
 				if (self.xPos < self.canvas.width + self.size) {
-					self.xPos = self.xPos + (0.3 * self.speed);	
+					self.xPos = self.xPos + (0.3 * self.speed);
 				} else {
 					self.xPos = -self.size;
 					self.yPos = self.originalY;
@@ -112,7 +112,7 @@ var Shape = function(opts) {
 				}
 			}
 		}
-	}
+	};
 
 	this.move = function(movement) {
 		this.movements[movement].move();
@@ -136,7 +136,7 @@ var Shape = function(opts) {
 
 	// set starting position
 	this.movements[this.movement].starting();
-	
+
 	this.drawShape = function(shape) {
 		var shapeAttributes = {
 			circle: function() {
@@ -151,23 +151,23 @@ var Shape = function(opts) {
 			},
 			square: function() {
 				self.context.rect(
-					self.xPos, 
-					self.yPos, 
-					self.size, 
+					self.xPos,
+					self.yPos,
+					self.size,
 					self.size
-				)
+				);
 			},
 			rectangle: function() {
 				self.context.rect(
-					self.xPos, 
-					self.yPos, 
-					self.size * 2, 
+					self.xPos,
+					self.yPos,
+					self.size * 2,
 					self.size
-				)
+				);
 			}
 		};
 		shapeAttributes[shape]();
-	}
+	};
 
 	this.update = function() {
 		var ctx = self.context;
@@ -181,7 +181,7 @@ var Shape = function(opts) {
 		this.move(self.movement);
 
 		// define style
-		this.setStyle(self.style)
+		this.setStyle(self.style);
 
 		ctx.closePath();
 
@@ -190,9 +190,9 @@ var Shape = function(opts) {
 		ctx.shadowOffsetX = 0;
 		ctx.shadowOffsetY = 0;
 
-		
+
 	};
-}
+};
 
 var shapeCreator = {
 	sets: [],
@@ -218,11 +218,11 @@ var shapeCreator = {
 				style: opts.style,
 				size: size,
 				speed: speed
-			})
+			});
 
 			shapes.push(shape);
 		}
-		
+
 		// if context already exists, add it to it
 		if (canvasUniqueness !== true) {
 			canvasUniqueness['shapes'] = canvasUniqueness['shapes'].concat(shapes);
@@ -234,12 +234,12 @@ var shapeCreator = {
 			set.shapes = shapes;
 			set.context = opts.context;
 			set.canvas = opts.canvas;
-	
-			this.sets.push(set)
+
+			this.sets.push(set);
 
 			draw();
 		}
-		
+
 	},
 
 	// checks if a set is unique, if it is return true, otherwise return the set
@@ -249,7 +249,7 @@ var shapeCreator = {
 		for (var x = 0; x < this.sets.length; x++) {
 			if (this.sets[x].canvas === opts.canvas) {
 				return this.sets[x];
-			} 
+			}
 		}
 
 		return canvasUniqueness;
