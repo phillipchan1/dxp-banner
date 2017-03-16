@@ -381,7 +381,7 @@ var shapesCreator = {
 	}
 };
 
-var init = function() {
+var init = (function() {
 
 	// generate circles in first canvas
 	shapesCreator.add(
@@ -398,7 +398,6 @@ var init = function() {
 			transitionIn: 'fade',
 			transitionOut: 'fade',
 			transitionThreshold: 0.2
-
 		}
 	);
 
@@ -449,7 +448,4 @@ var init = function() {
 			transitionThreshold: 0.2
 		}
 	);
-};
-
-
-init();
+})();
