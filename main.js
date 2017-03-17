@@ -183,6 +183,33 @@ var Shape = function(opts) {
 					}
 				}
 			}
+		},
+		accelerate: {
+			in: {
+				init: function() {
+					self.originalSpeed = self.speed;
+				},
+				action: function(transitionInRange) {
+					if (self.xPos < 100) {
+						self.speed = self.speed + 0.01;
+					}
+					else {
+						self.speed = self.originalSpeed;
+					}
+				}
+			},
+			out: {
+				init: function() {
+					self.originalSpeed = self.speed;
+				},
+				action: function(transitionOutRange) {
+					if (self.xPos > transitionOutRange[0] && self.xPos < transitionOutRange[1]) {
+						self.speed = self.speed + 0.03;
+					} else {
+						self.speed = self.originalSpeed;
+					}
+				}
+			}
 		}
 	};
 
@@ -208,7 +235,7 @@ var Shape = function(opts) {
 
 		if (self.transitionOut) {
 			if (self.xPos / self.canvas.width > 0.8) {
-				this.transitions[self.transitionIn]['out']['action'](transitionOutRange);
+				this.transitions[self.transitionOut]['out']['action'](transitionOutRange);
 			}
 		}
 	};
@@ -403,8 +430,8 @@ var init = (function() {
 			maxSpeed: 2,
 			maxSize: 10,
 			style: 'solid',
-			transitionIn: 'fade',
-			transitionOut: 'fade',
+			transitionIn: 'accelerate',
+			transitionOut: 'accelerate',
 			transitionThreshold: 0.3
 		}
 	);
