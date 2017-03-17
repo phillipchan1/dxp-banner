@@ -86,7 +86,7 @@ var Shape = function(opts) {
 			move: function() {
 				// move horizontally
 				if (self.xPos < self.canvas.width + self.size) {
-					self.xPos = self.xPos + (0.3 * self.speed);
+					self.xPos = self.xPos + (0.1 * self.speed);
 				} else {
 					self.xPos = -self.size;
 					self.yPos = self.originalY;
@@ -120,7 +120,7 @@ var Shape = function(opts) {
 			move: function() {
 				// move horizontally
 				if (self.xPos < self.canvas.width + self.size) {
-					self.xPos = self.xPos + (0.3 * self.speed);
+					self.xPos = self.xPos + (0.1 * self.speed);
 				} else {
 					self.xPos = -self.size;
 					self.yPos = self.originalY;
@@ -128,9 +128,9 @@ var Shape = function(opts) {
 
 				// move vertically
 				if (self.yPos > (self.canvas.height / 2)) {
-					self.yPos = self.yPos + 0.1;
+					self.yPos = self.yPos + 0.05;
 				} else {
-					self.yPos = self.yPos - 0.1;
+					self.yPos = self.yPos - 0.05;
 				}
 			}
 		}
@@ -180,33 +180,6 @@ var Shape = function(opts) {
 						self.opacity = self.opacity - .005;
 					} else if (self.xPos > transitionOutRange[1]) {
 						self.opacity = self.originalOpacity;
-					}
-				}
-			}
-		},
-		accelerate: {
-			in: {
-				init: function() {
-					self.originalSpeed = self.speed;
-				},
-				action: function(transitionInRange) {
-					if (self.xPos < 100) {
-						self.speed = self.speed + 0.01;
-					}
-					else {
-						self.speed = self.originalSpeed;
-					}
-				}
-			},
-			out: {
-				init: function() {
-					self.originalSpeed = self.speed;
-				},
-				action: function(transitionOutRange) {
-					if (self.xPos > transitionOutRange[0] && self.xPos < transitionOutRange[1]) {
-						self.speed = self.speed + 0.03;
-					} else {
-						self.speed = self.originalSpeed;
 					}
 				}
 			}
@@ -427,11 +400,11 @@ var init = (function() {
 			movement: 'converge',
 			shape: 'circle',
 			num: 30,
-			maxSpeed: 2,
+			maxSpeed: 3,
 			maxSize: 10,
 			style: 'solid',
-			transitionIn: 'accelerate',
-			transitionOut: 'accelerate',
+			transitionIn: 'fade',
+			transitionOut: 'fade',
 			transitionThreshold: 0.3
 		}
 	);
@@ -445,7 +418,7 @@ var init = (function() {
 			shape: 'hexagon',
 			movement: 'expand',
 			num: 10,
-			maxSpeed: 2,
+			maxSpeed: 3,
 			maxSize: 10,
 			style: 'outline',
 			transitionIn: 'fade',
@@ -460,7 +433,7 @@ var init = (function() {
 			shape: 'circle',
 			movement: 'expand',
 			num: 10,
-			maxSpeed: 2,
+			maxSpeed: 3,
 			maxSize: 10,
 			style: 'outline',
 			transitionIn: 'fade',
@@ -475,7 +448,7 @@ var init = (function() {
 			shape: 'rectangle',
 			movement: 'expand',
 			num: 10,
-			maxSpeed: 2,
+			maxSpeed: 3,
 			maxSize: 10,
 			style: 'outline',
 			transitionIn: 'fade',
