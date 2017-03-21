@@ -103,7 +103,7 @@ var Shape = function(opts) {
 		},
 		expand: {
 			starting: function() {
-				var xPos = utils.generateNumBetween(-200, opts.canvas.width / 2);
+				var xPos = utils.generateNumBetween(-200, opts.canvas.width);
 				var yPos = utils.generateNumBetween(
 					// 40% from top
 					(opts.canvas.height / 2) - (opts.canvas.height * .1),
@@ -164,12 +164,12 @@ var Shape = function(opts) {
 					self.originalOpacity = self.opacity;
 				},
 				action: function(transitionInRange) {
-					if (self.xPos <= transitionInRange[0]) {
+					if (self.xPos <= 0) {
 						self.opacity = 0;
-					} else if (self.opacity < self.originalOpacity) {
-							self.opacity = self.opacity + .002;
-						}
+					} else if (self.opacity < self.originalOpacity && self.xPos < transitionInRange[1]) {
+						self.opacity = self.opacity + 0.001;
 					}
+				}
 			},
 			out: {
 				init: function() {
@@ -337,6 +337,8 @@ var shapesCreator = {
 			set.shapes = shapes;
 			set.context = instance.context;
 			set.canvas = instance.canvas;
+			set.canvasWidth = opts.canvasWidth;
+			set.canvasHeight = opts.canvasHeight;
 
 			this.sets.push(set);
 
@@ -362,8 +364,7 @@ var shapesCreator = {
 	initCanvas: function(selector, opts) {
 		var canvas = document.querySelector(selector);
 		var context = canvas.getContext('2d');
-		var windowWidth = window.innerWidth;
-
+		console.log(canvas);
 		// set width
 		if (opts.canvasWidth) {
 			utils.setCanvasSize({
@@ -389,6 +390,25 @@ var shapesCreator = {
 	}
 };
 
+// redraw on window resize
+window.addEventListener('resize', function(e) {
+	for (var p = 0; p < shapesCreator.sets.length; p++) {
+		utils.setCanvasSize({
+			canvas: shapesCreator.sets[p]['canvas'],
+			property: 'width',
+			size: shapesCreator.sets[p].canvasWidth
+		});
+
+		utils.setCanvasSize({
+			canvas: shapesCreator.sets[p]['canvas'],
+			property: 'height',
+			size: shapesCreator.sets[p].canvasHeight
+		});
+
+		shapesCreator.sets[p].context.scale(1,1)
+	};
+});
+
 var init = (function() {
 
 	// generate circles in first canvas
@@ -396,7 +416,7 @@ var init = (function() {
 		'#dxp-background',
 		{
 			canvasWidth: '50%',
-			canvasHeight: '100%',
+			canvasHeight: '80%',
 			movement: 'converge',
 			shape: 'circle',
 			num: 30,
@@ -414,10 +434,10 @@ var init = (function() {
 		'#dxp-background2',
 		{
 			canvasWidth: '50%',
-			canvasHeight: '100%',
+			canvasHeight: '80%',
 			shape: 'hexagon',
 			movement: 'expand',
-			num: 10,
+			num: 14,
 			maxSpeed: 3,
 			maxSize: 10,
 			style: 'outline',
@@ -432,7 +452,7 @@ var init = (function() {
 		{
 			shape: 'circle',
 			movement: 'expand',
-			num: 10,
+			num: 14,
 			maxSpeed: 3,
 			maxSize: 10,
 			style: 'outline',
@@ -447,7 +467,7 @@ var init = (function() {
 		{
 			shape: 'rectangle',
 			movement: 'expand',
-			num: 10,
+			num: 14,
 			maxSpeed: 3,
 			maxSize: 10,
 			style: 'outline',
