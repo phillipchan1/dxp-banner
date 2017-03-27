@@ -10,7 +10,7 @@ var utils = (function() {
 			if (/^\d+(\.\d+)?%$/.test(string)) {
 				let x = parseFloat(string);
 				if (isNaN(x) || x < 0 || x > 100) {
-				    return false;
+					return false;
 				} else {
 					return true;
 				}
@@ -49,7 +49,7 @@ var utils = (function() {
 
 		// converts a string to Title Case
 		toTitleCase: function(str) {
-    		return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+			return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 		}
 	};
 })();
@@ -112,7 +112,7 @@ var Shape = function(opts) {
 				if (self.yPos > (self.canvas.height / 2)) {
 					self.yPos = self.yPos - 0.05;
 				}
-					else {
+				else {
 					self.yPos = self.yPos + 0.05;
 				}
 			}
@@ -126,7 +126,7 @@ var Shape = function(opts) {
 
 					// 60% from top
 					(opts.canvas.height / 2) + (opts.canvas.height * .05)
-				);
+					);
 
 				self.originalY = yPos;
 				self.originalX = xPos;
@@ -239,7 +239,7 @@ var Shape = function(opts) {
 					0,
 					Math.PI * 2,
 					false
-				);
+					);
 			},
 			square: function() {
 				self.context.rect(
@@ -247,7 +247,7 @@ var Shape = function(opts) {
 					self.yPos,
 					self.size,
 					self.size
-				);
+					);
 			},
 			rectangle: function() {
 				self.context.rect(
@@ -255,15 +255,15 @@ var Shape = function(opts) {
 					self.yPos,
 					self.size * 2,
 					self.size
-				);
+					);
 			},
 			hexagon: function() {
 				self.context.moveTo(self.xPos, self.yPos);
-	            self.context.lineTo(self.xPos + self.size, self.yPos - (self.size / 2));
-	            self.context.lineTo(self.xPos + self.size, self.yPos - (self.size + (self.size / 2)));
-	            self.context.lineTo(self.xPos, self.yPos - (self.size * 2));
-	            self.context.lineTo(self.xPos - self.size, self.yPos - (self.size + (self.size/ 2)));
-	            self.context.lineTo(self.xPos - self.size, self.yPos - (self.size /2));
+				self.context.lineTo(self.xPos + self.size, self.yPos - (self.size / 2));
+				self.context.lineTo(self.xPos + self.size, self.yPos - (self.size + (self.size / 2)));
+				self.context.lineTo(self.xPos, self.yPos - (self.size * 2));
+				self.context.lineTo(self.xPos - self.size, self.yPos - (self.size + (self.size/ 2)));
+				self.context.lineTo(self.xPos - self.size, self.yPos - (self.size /2));
 			}
 		};
 
@@ -347,21 +347,21 @@ var shapesCreator = {
 			canvasUniqueness['shapes'] = canvasUniqueness['shapes'].concat(shapes);
 
 		// otherwise create a new set and push it to master set
-		} else {
-			var set = {};
+	} else {
+		var set = {};
 
-			set.shapes = shapes;
-			set.context = instance.context;
-			set.canvas = instance.canvas;
-			set.canvasWidth = opts.canvasWidth;
-			set.canvasHeight = opts.canvasHeight;
+		set.shapes = shapes;
+		set.context = instance.context;
+		set.canvas = instance.canvas;
+		set.canvasWidth = opts.canvasWidth;
+		set.canvasHeight = opts.canvasHeight;
 
-			this.sets.push(set);
+		this.sets.push(set);
 
-			drawAnimation();
-		}
+		drawAnimation();
+	}
 
-	},
+},
 
 	// checks if a set is unique, if it is return true, otherwise return the set
 	checkSetUniqueness: function(canvas) {
@@ -461,7 +461,7 @@ var init = (function() {
 			transitionOut: 'fade',
 			transitionThreshold: 0.3
 		}
-	);
+		);
 
 	// shapesCreator.add(
 	// 	'#dxp-background2',
