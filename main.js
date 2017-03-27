@@ -21,13 +21,28 @@ var utils = (function() {
 
 		// set the canvas size
 		setCanvasSize: function(opts) {
+			// if percentage
 			if (this.isPercentage(opts.size)) {
+
+				// if no parent is specified, find the element's parent
 				let parentProperty = 'offset' + this.toTitleCase(opts.property);
-				let parentPropertySize = opts.canvas.parentElement[parentProperty];
+				let parentPropertySize;
+
+				if (opts.sizeParent) {
+					if (opts.sizeParent === 'window') {
+						parentPropertySize = window['inner' + this.toTitleCase(opts.property)];
+					} else if (opts.sizeParent.length > 0) {
+						parentPropertySize = document.querySelector(opts.sizeParent);
+					}
+				} else {
+					parentPropertySize = opts.canvas.parentElement[parentProperty];
+				}
 
 				opts.canvas[opts.property] = (parseFloat(opts.size) / 100) * parentPropertySize;
+			}
 
-			} else {
+			// fixed pixel size
+			else {
 				opts.canvas[opts.property] = opts.size;
 			}
 		},
@@ -48,9 +63,10 @@ var drawAnimation = function() {
 		for (var i = 0; i < currentSet.shapes.length; i++) {
 			currentSet.shapes[i].update();
 		}
+
+		requestAnimationFrame(drawAnimation);
 	}
 
-	requestAnimationFrame(drawAnimation);
 };
 
 var Shape = function(opts) {
@@ -106,10 +122,10 @@ var Shape = function(opts) {
 				var xPos = utils.generateNumBetween(-200, opts.canvas.width);
 				var yPos = utils.generateNumBetween(
 					// 40% from top
-					(opts.canvas.height / 2) - (opts.canvas.height * .1),
+					(opts.canvas.height / 2) - (opts.canvas.height * .05),
 
 					// 60% from top
-					(opts.canvas.height / 2) + (opts.canvas.height * .1)
+					(opts.canvas.height / 2) + (opts.canvas.height * .05)
 				);
 
 				self.originalY = yPos;
@@ -243,11 +259,11 @@ var Shape = function(opts) {
 			},
 			hexagon: function() {
 				self.context.moveTo(self.xPos, self.yPos);
-	            self.context.lineTo(self.xPos + self.size, self.yPos - self.size);
-	            self.context.lineTo(self.xPos + self.size, self.yPos - self.size * 2);
-	            self.context.lineTo(self.xPos, self.yPos - self.size * 3);
-	            self.context.lineTo(self.xPos - self.size, self.yPos - self.size * 2);
-	            self.context.lineTo(self.xPos - self.size, self.yPos - self.size);
+	            self.context.lineTo(self.xPos + self.size, self.yPos - (self.size / 2));
+	            self.context.lineTo(self.xPos + self.size, self.yPos - (self.size + (self.size / 2)));
+	            self.context.lineTo(self.xPos, self.yPos - (self.size * 2));
+	            self.context.lineTo(self.xPos - self.size, self.yPos - (self.size + (self.size/ 2)));
+	            self.context.lineTo(self.xPos - self.size, self.yPos - (self.size /2));
 			}
 		};
 
@@ -412,22 +428,22 @@ window.addEventListener('resize', function(e) {
 var init = (function() {
 
 	// generate circles in first canvas
-	shapesCreator.add(
-		'#dxp-background',
-		{
-			canvasWidth: '50%',
-			canvasHeight: '80%',
-			movement: 'converge',
-			shape: 'circle',
-			num: 30,
-			maxSpeed: 3,
-			maxSize: 10,
-			style: 'solid',
-			transitionIn: 'fade',
-			transitionOut: 'fade',
-			transitionThreshold: 0.3
-		}
-	);
+	// shapesCreator.add(
+	// 	'#dxp-background',
+	// 	{
+	// 		canvasWidth: '50%',
+	// 		canvasHeight: '80%',
+	// 		movement: 'converge',
+	// 		shape: 'circle',
+	// 		num: 30,
+	// 		maxSpeed: 3,
+	// 		maxSize: 8,
+	// 		style: 'solid',
+	// 		transitionIn: 'fade',
+	// 		transitionOut: 'fade',
+	// 		transitionThreshold: 0.3
+	// 	}
+	// );
 
 	// generate other shapes in second canvas
 	shapesCreator.add(
@@ -439,7 +455,7 @@ var init = (function() {
 			movement: 'expand',
 			num: 14,
 			maxSpeed: 3,
-			maxSize: 10,
+			maxSize: 8,
 			style: 'outline',
 			transitionIn: 'fade',
 			transitionOut: 'fade',
@@ -447,33 +463,33 @@ var init = (function() {
 		}
 	);
 
-	shapesCreator.add(
-		'#dxp-background2',
-		{
-			shape: 'circle',
-			movement: 'expand',
-			num: 14,
-			maxSpeed: 3,
-			maxSize: 10,
-			style: 'outline',
-			transitionIn: 'fade',
-			transitionOut: 'fade',
-			transitionThreshold: 0.3
-		}
-	);
+	// shapesCreator.add(
+	// 	'#dxp-background2',
+	// 	{
+	// 		shape: 'circle',
+	// 		movement: 'expand',
+	// 		num: 14,
+	// 		maxSpeed: 3,
+	// 		maxSize: 8,
+	// 		style: 'outline',
+	// 		transitionIn: 'fade',
+	// 		transitionOut: 'fade',
+	// 		transitionThreshold: 0.3
+	// 	}
+	// );
 
-	shapesCreator.add(
-		'#dxp-background2',
-		{
-			shape: 'rectangle',
-			movement: 'expand',
-			num: 14,
-			maxSpeed: 3,
-			maxSize: 10,
-			style: 'outline',
-			transitionIn: 'fade',
-			transitionOut: 'fade',
-			transitionThreshold: 0.3
-		}
-	);
+	// shapesCreator.add(
+	// 	'#dxp-background2',
+	// 	{
+	// 		shape: 'rectangle',
+	// 		movement: 'expand',
+	// 		num: 14,
+	// 		maxSpeed: 3,
+	// 		maxSize: 8,
+	// 		style: 'outline',
+	// 		transitionIn: 'fade',
+	// 		transitionOut: 'fade',
+	// 		transitionThreshold: 0.3
+	// 	}
+	// );
 })();
