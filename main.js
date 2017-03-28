@@ -239,7 +239,7 @@ var Shape = function(opts) {
 					0,
 					Math.PI * 2,
 					false
-					);
+				);
 			},
 			square: function() {
 				self.context.rect(
@@ -247,7 +247,7 @@ var Shape = function(opts) {
 					self.yPos,
 					self.size,
 					self.size
-					);
+				);
 			},
 			rectangle: function() {
 				self.context.rect(
@@ -255,7 +255,7 @@ var Shape = function(opts) {
 					self.yPos,
 					self.size * 2,
 					self.size
-					);
+				);
 			},
 			hexagon: function() {
 				self.context.moveTo(self.xPos, self.yPos);
