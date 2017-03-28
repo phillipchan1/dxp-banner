@@ -1,6 +1,6 @@
 # DXP Background
 Animating shapes mini-plugin. Example: 
-https://dxp-banner-mmtjwqonxq.now.sh
+https://dxp-banner-imlonrmffk.now.sh
 
 #### 
 ```
