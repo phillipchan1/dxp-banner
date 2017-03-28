@@ -258,13 +258,13 @@ var Shape = function(opts) {
 				);
 			},
 			hexagon: function() {
-				self.context.moveTo(self.xPos, self.yPos);
-				self.context.lineTo(self.xPos + self.size, self.yPos - (self.size / 2));
-				self.context.lineTo(self.xPos + self.size, self.yPos - (self.size + (self.size / 2)));
-				self.context.lineTo(self.xPos, self.yPos - (self.size * 2));
-				self.context.lineTo(self.xPos - self.size, self.yPos - (self.size + (self.size/ 2)));
-				self.context.lineTo(self.xPos - self.size, self.yPos - (self.size /2));
-			}
+                self.context.moveTo(self.xPos, self.yPos);
+                self.context.lineTo(self.xPos + (self.size * 1.134), self.yPos - (self.size / 2));
+                self.context.lineTo(self.xPos + (self.size * 1.134), self.yPos - (self.size + (self.size / 2)));
+                self.context.lineTo(self.xPos, self.yPos - (self.size * 2));
+                self.context.lineTo(self.xPos - (self.size * 1.134), self.yPos - (self.size + (self.size / 2)));
+                self.context.lineTo(self.xPos - (self.size * 1.134), self.yPos - (self.size /2));
+            }
 		};
 
 		self.context.beginPath();
