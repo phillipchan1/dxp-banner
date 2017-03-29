@@ -160,9 +160,19 @@ var Shape = function(opts) {
 
 				// move vertically
 				if (self.yPos > (self.canvas.height / 2)) {
-					self.yPos = self.yPos + (0.02 * self.speed);
+					if (self.xPos < self.canvas.width * .6) {
+						self.yPos = self.yPos + (0.01 * self.speed);
+					} else {
+						self.yPos = self.yPos + (0.05 * self.speed);
+					}
+
 				} else {
-					self.yPos = self.yPos - (0.02 * self.speed);
+					if (self.xPos < self.canvas.width * .6) {
+						self.yPos = self.yPos - (0.01 * self.speed);
+					} else {
+						self.yPos = self.yPos - (0.05 * self.speed);
+					}
+
 				}
 			}
 		}
