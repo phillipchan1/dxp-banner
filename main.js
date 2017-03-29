@@ -55,6 +55,8 @@ var utils = (function() {
 })();
 
 var drawAnimation = function() {
+	var timeToRefresh = 1000 / shapesCreator.fps;
+
 	for (let p = 0; p < shapesCreator.sets.length; p++) {
 		var currentSet = shapesCreator.sets[p];
 
@@ -63,10 +65,11 @@ var drawAnimation = function() {
 		for (var i = 0; i < currentSet.shapes.length; i++) {
 			currentSet.shapes[i].update();
 		}
-
-		requestAnimationFrame(drawAnimation);
 	}
 
+	setTimeout(function() {
+		requestAnimationFrame(drawAnimation);
+	}, timeToRefresh);
 };
 
 var Shape = function(opts) {
@@ -110,10 +113,23 @@ var Shape = function(opts) {
 
 				// move vertically
 				if (self.yPos > (self.canvas.height / 2)) {
-					self.yPos = self.yPos - 0.05;
+
+					// when you get to middle, move slower
+					if (self.yPos < self.canvas.height * 0.6) {
+						self.yPos = self.yPos - (0.01 * self.speed);
+					} else {
+						self.yPos = self.yPos - (0.05 * self.speed);
+					}
+
 				}
 				else {
-					self.yPos = self.yPos + 0.05;
+
+					if (self.yPos > self.canvas.height * 0.3) {
+						self.yPos = self.yPos + (0.01 * self.speed);
+					} else {
+						self.yPos = self.yPos + (0.05 * self.speed);
+					}
+
 				}
 			}
 		},
@@ -144,9 +160,9 @@ var Shape = function(opts) {
 
 				// move vertically
 				if (self.yPos > (self.canvas.height / 2)) {
-					self.yPos = self.yPos + 0.05;
+					self.yPos = self.yPos + (0.02 * self.speed);
 				} else {
-					self.yPos = self.yPos - 0.05;
+					self.yPos = self.yPos - (0.02 * self.speed);
 				}
 			}
 		}
@@ -306,6 +322,7 @@ var Shape = function(opts) {
 };
 
 var shapesCreator = {
+	fps: 30,
 	sets: [],
 	add: function(selector, opts) {
 
@@ -357,10 +374,9 @@ var shapesCreator = {
 		set.canvasHeight = opts.canvasHeight;
 
 		this.sets.push(set);
-
-		drawAnimation();
 	}
 
+	drawAnimation();
 },
 
 	// checks if a set is unique, if it is return true, otherwise return the set
@@ -380,7 +396,7 @@ var shapesCreator = {
 	initCanvas: function(selector, opts) {
 		var canvas = document.querySelector(selector);
 		var context = canvas.getContext('2d');
-		console.log(canvas);
+
 		// set width
 		if (opts.canvasWidth) {
 			utils.setCanvasSize({
@@ -427,23 +443,25 @@ window.addEventListener('resize', function(e) {
 
 var init = (function() {
 
+	shapesCreator.fps = 17;
+
 	// generate circles in first canvas
-	// shapesCreator.add(
-	// 	'#dxp-background',
-	// 	{
-	// 		canvasWidth: '50%',
-	// 		canvasHeight: '80%',
-	// 		movement: 'converge',
-	// 		shape: 'circle',
-	// 		num: 30,
-	// 		maxSpeed: 3,
-	// 		maxSize: 8,
-	// 		style: 'solid',
-	// 		transitionIn: 'fade',
-	// 		transitionOut: 'fade',
-	// 		transitionThreshold: 0.3
-	// 	}
-	// );
+	shapesCreator.add(
+		'#dxp-background',
+		{
+			canvasWidth: '50%',
+			canvasHeight: '80%',
+			movement: 'converge',
+			shape: 'circle',
+			num: 30,
+			maxSpeed: 2,
+			maxSize: 8,
+			style: 'solid',
+			transitionIn: 'fade',
+			transitionOut: 'fade',
+			transitionThreshold: 0.3
+		}
+	);
 
 	// generate other shapes in second canvas
 	shapesCreator.add(
@@ -453,43 +471,43 @@ var init = (function() {
 			canvasHeight: '80%',
 			shape: 'hexagon',
 			movement: 'expand',
-			num: 14,
-			maxSpeed: 3,
+			num: 12,
+			maxSpeed: 2,
 			maxSize: 8,
 			style: 'outline',
 			transitionIn: 'fade',
 			transitionOut: 'fade',
 			transitionThreshold: 0.3
 		}
-		);
+	);
 
-	// shapesCreator.add(
-	// 	'#dxp-background2',
-	// 	{
-	// 		shape: 'circle',
-	// 		movement: 'expand',
-	// 		num: 14,
-	// 		maxSpeed: 3,
-	// 		maxSize: 8,
-	// 		style: 'outline',
-	// 		transitionIn: 'fade',
-	// 		transitionOut: 'fade',
-	// 		transitionThreshold: 0.3
-	// 	}
-	// );
+	shapesCreator.add(
+		'#dxp-background2',
+		{
+			shape: 'square',
+			movement: 'expand',
+			num: 12,
+			maxSpeed: 2,
+			maxSize: 8,
+			style: 'outline',
+			transitionIn: 'fade',
+			transitionOut: 'fade',
+			transitionThreshold: 0.3
+		}
+	);
 
-	// shapesCreator.add(
-	// 	'#dxp-background2',
-	// 	{
-	// 		shape: 'rectangle',
-	// 		movement: 'expand',
-	// 		num: 14,
-	// 		maxSpeed: 3,
-	// 		maxSize: 8,
-	// 		style: 'outline',
-	// 		transitionIn: 'fade',
-	// 		transitionOut: 'fade',
-	// 		transitionThreshold: 0.3
-	// 	}
-	// );
+	shapesCreator.add(
+		'#dxp-background2',
+		{
+			shape: 'rectangle',
+			movement: 'expand',
+			num: 12,
+			maxSpeed: 2,
+			maxSize: 8,
+			style: 'outline',
+			transitionIn: 'fade',
+			transitionOut: 'fade',
+			transitionThreshold: 0.3
+		}
+	);
 })();
