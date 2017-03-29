@@ -4,7 +4,7 @@ https://dxp-banner-imlonrmffk.now.sh
 
 #### 
 ```
-shapeCreator.add(selector, opts)
+shapesCreator.add(selector, opts)
 ```
 
 ## Simple Usage
@@ -90,3 +90,11 @@ Options:
 **transitionThreshold** [Integer]
 
 Specifies what % of the canvas will it begin its transitions in and out. E.g. `0.2` signifies that the period of transition in is between 0-20% of the canvas width and the period of transition out is between the 80%-100% of canvas width.
+
+## FPS Limiting
+For performance, you can limit the FPS of the animation:
+
+```
+shapesCreator.fps = 20;
+```
+
