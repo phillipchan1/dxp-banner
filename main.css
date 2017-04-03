@@ -1,7 +1,6 @@
 .dxp-banner {
   background: linear-gradient(#2d4759, #0a0b0e);
-  display: flex;
-  justify-content: space-between;
+  display: inline-block;
   min-height: 100vh;
   position: relative;
   width: 100%;

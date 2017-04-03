@@ -28,11 +28,12 @@ var utils = (function() {
 				let parentProperty = 'offset' + this.toTitleCase(opts.property);
 				let parentPropertySize;
 
+				// if user provides a parent to calculate percentage size
 				if (opts.sizeParent) {
 					if (opts.sizeParent === 'window') {
 						parentPropertySize = window['inner' + this.toTitleCase(opts.property)];
 					} else if (opts.sizeParent.length > 0) {
-						parentPropertySize = document.querySelector(opts.sizeParent);
+						parentPropertySize = document.querySelector(opts.sizeParent)[parentProperty];
 					}
 				} else {
 					parentPropertySize = opts.canvas.parentElement[parentProperty];
@@ -285,11 +286,11 @@ var Shape = function(opts) {
 			},
 			hexagon: function() {
                 self.context.moveTo(self.xPos, self.yPos);
-                self.context.lineTo(self.xPos + (self.size * 1.134), self.yPos - (self.size / 2));
-                self.context.lineTo(self.xPos + (self.size * 1.134), self.yPos - (self.size + (self.size / 2)));
+                self.context.lineTo(self.xPos + (self.size * 0.8666), self.yPos - (self.size / 2));
+                self.context.lineTo(self.xPos + (self.size * 0.8666), self.yPos - (self.size + (self.size / 2)));
                 self.context.lineTo(self.xPos, self.yPos - (self.size * 2));
-                self.context.lineTo(self.xPos - (self.size * 1.134), self.yPos - (self.size + (self.size / 2)));
-                self.context.lineTo(self.xPos - (self.size * 1.134), self.yPos - (self.size /2));
+                self.context.lineTo(self.xPos - (self.size * 0.8666), self.yPos - (self.size + (self.size / 2)));
+                self.context.lineTo(self.xPos - (self.size * 0.8666), self.yPos - (self.size /2));
             }
 		};
 
@@ -447,7 +448,7 @@ window.addEventListener('resize', function(e) {
 			size: shapesCreator.sets[p].canvasHeight
 		});
 
-		shapesCreator.sets[p].context.scale(1,1)
+		shapesCreator.sets[p].context.scale(1,1);
 	};
 });
 
@@ -459,8 +460,8 @@ var init = (function() {
 	shapesCreator.add(
 		'#dxp-background',
 		{
-			canvasWidth: '50%',
-			canvasHeight: '80%',
+			canvasWidth: '49%',
+			canvasHeight: '100%',
 			movement: 'converge',
 			shape: 'circle',
 			num: 30,
@@ -477,8 +478,8 @@ var init = (function() {
 	shapesCreator.add(
 		'#dxp-background2',
 		{
-			canvasWidth: '50%',
-			canvasHeight: '80%',
+			canvasWidth: '49%',
+			canvasHeight: '100%',
 			shape: 'hexagon',
 			movement: 'expand',
 			num: 12,
